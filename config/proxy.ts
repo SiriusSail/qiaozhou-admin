@@ -16,9 +16,10 @@ export default {
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
     },
-    '/apis/': {
+    '/apis': {
       target: 'http://192.168.31.229:9000',
       changeOrigin: true,
+      pathRewrite: { '^/apis': '' },
     },
   },
   test: {

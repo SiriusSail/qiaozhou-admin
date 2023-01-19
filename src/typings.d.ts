@@ -22,3 +22,29 @@ declare module 'bizcharts-plugin-slider';
 declare let ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: 'site' | undefined;
 
 declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
+
+declare namespace API {
+  type PropsType<T = any> = {
+    code: keyof typeof codeMessage;
+    data: T;
+    message: string;
+    success: boolean;
+    timestamp: number;
+  };
+  type RequestListReqType<T = any> = {
+    pageNo: number;
+    pageSize: number;
+  } & T;
+  type RequestListResType<T = any> = {
+    countId: string;
+    current: number;
+    maxLimit: number;
+    pages: number;
+    size: number;
+    total: number;
+    optimizeCountSql: boolean;
+    searchCount: boolean;
+    orders: { asc: boolean; column: stirng }[];
+    records: T[];
+  };
+}

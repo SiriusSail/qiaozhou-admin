@@ -2,14 +2,6 @@
 /* eslint-disable */
 
 declare namespace API {
-  type PropsType<T = any> = {
-    code: keyof typeof codeMessage;
-    data: T;
-    message: string;
-    success: boolean;
-    timestamp: number;
-  };
-
   type CurrentUser = {
     name?: string;
     avatar?: string;

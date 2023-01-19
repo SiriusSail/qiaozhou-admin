@@ -5,6 +5,7 @@ import { ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
 import { login as apiLogin } from '@/services/auth';
+import { setCookie } from '@/utils/cookies';
 
 import styles from './index.less';
 
@@ -41,13 +42,13 @@ const Login: React.FC = () => {
     try {
       // 登录
       const loginRes = await apiLogin({ ...values });
-      console.log();
       if (loginRes.success === true) {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
+        setCookie('token', loginRes.data);
         await fetchUserInfo();
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
@@ -56,7 +57,6 @@ const Login: React.FC = () => {
         history.push(redirect || '/');
         return;
       }
-      console.log(loginRes.message);
       // 如果失败去设置用户错误信息
       setUserLoginState(loginRes);
     } catch (error) {

@@ -35,8 +35,19 @@ export type RoleType = {
   updateTime?: string;
 };
 
-export const rolePage = () =>
-  request.get<API.RequestListResType<RoleType>>('/backend/sys/role/page');
+type RolePageReq = {
+  roleName: string;
+  status: string;
+};
+/**
+ * 分页查询角色
+ */
+export const rolePage = (data: API.RequestListReqType<RolePageReq>) =>
+  request.post<API.RequestListResType<RoleType>>('/backend/sys/role/page', { data });
+/**
+ * 查询角色列表
+ */
+export const roleList = () => request.post<RoleType[]>('/backend/sys/role/list');
 /**
  * 禁用
  */
@@ -56,4 +67,4 @@ export const roleAdd = (data: RoleType) =>
  * 修改
  */
 export const roleUpdate = (data: RoleType) =>
-  request.post<API.RequestListResType<RoleType>>(`/backend/sys/role/enable`, { data });
+  request.post<API.RequestListResType<RoleType>>(`/backend/sys/role/update`, { data });

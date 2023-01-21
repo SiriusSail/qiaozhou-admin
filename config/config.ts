@@ -103,6 +103,25 @@ export default defineConfig({
       component: './role',
     },
     {
+      name: '用户管理',
+      icon: 'table',
+      path: '/user-management',
+      component: './userManagement',
+    },
+    {
+      name: '活动管理',
+      icon: 'table',
+      path: '/business',
+      component: './business',
+    },
+    {
+      name: '活动详情',
+      layout: false,
+      icon: 'smile',
+      path: '/business/details/:id',
+      component: './business/details',
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       icon: 'dashboard',

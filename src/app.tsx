@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import { getUserInfo } from './services/auth';
 import type { UserType } from './services/auth';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import MenuStore from '@/sotre/menuStore';
 import defaultSettings from '../config/defaultSettings';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -90,7 +91,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
-        <>
+        <MenuStore.Provider>
           {children}
           {!props.location?.pathname?.includes('/login') && (
             <SettingDrawer
@@ -105,7 +106,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
               }}
             />
           )}
-        </>
+        </MenuStore.Provider>
       );
     },
     ...initialState?.settings,

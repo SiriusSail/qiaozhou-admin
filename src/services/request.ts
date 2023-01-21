@@ -43,10 +43,10 @@ const client = extend({
         content: `请求错误 ${status}: ${errorText}`,
         description: errorText,
       });
-    } else if (!response) {
-      message.error({
-        description: '您的网络发生异常，无法连接服务器',
-      });
+      // } else if (!response) {
+      // message.error({
+      //   description: '您的网络发生异常，无法连接服务器',
+      // });
     }
     return Promise.reject(error);
   }, // 默认错误处理
@@ -90,7 +90,14 @@ client.interceptors.response.use(async (response) => {
       //   window.__POWERED_BY_QIANKUN__ ? (window.location.href = '/#/') : router.replace('/user/login')
       return data;
     }
+    if (data?.success === false) {
+      message.error({
+        content: data.message || '网络错误',
+      });
+      return Promise.reject(data);
+    }
   } catch (error) {}
+
   return response;
 });
 

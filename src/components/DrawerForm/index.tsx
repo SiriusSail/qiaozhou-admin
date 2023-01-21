@@ -1,8 +1,9 @@
-import { Drawer, Form, Button } from 'antd';
-import type { DrawerProps, FormInstance, FormProps } from 'antd';
+import { Drawer, Form, Button, Space } from 'antd';
+import type { DrawerProps, FormInstance } from 'antd';
 import { useImperativeHandle, useMemo, useRef, useCallback } from 'react';
 import { useState } from 'react';
 import Sotre from './store';
+import { useRequest } from 'umi';
 
 export type OperationType = 'see' | 'new' | 'idea';
 
@@ -59,14 +60,18 @@ const DrawerForm: React.FC<PropsType> = ({
     [close, open],
   );
 
-  const newOnFinish: FormProps['onFinish'] = useCallback(
-    async (value) => {
-      console.log(1111);
-      if (onFinish) {
-        await onFinish(value)?.then(close);
+  const { run: newOnFinish, loading } = useRequest(
+    () => {
+      if (!formRef.current) {
+        return Promise.reject(false);
       }
+      return formRef.current?.validateFields().then(async (res) => {
+        await onFinish?.(res)?.then(close);
+      });
     },
-    [close, onFinish],
+    {
+      manual: true,
+    },
   );
 
   const drawerTitle = useMemo(() => {
@@ -78,27 +83,30 @@ const DrawerForm: React.FC<PropsType> = ({
 
   return (
     <Sotre.Provider>
-      <Drawer {...props} open={visible} title={drawerTitle}>
-        <Form
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          ref={(ref) => (formRef.current = ref)}
-          onFinish={newOnFinish}
-        >
+      <Form
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        ref={(ref) => {
+          formRef.current = ref;
+        }}
+      >
+        <Drawer {...props} open={visible} title={drawerTitle}>
           {children}
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            {operation !== 'see' && (
-              <Button type="primary" htmlType="submit">
-                提交
+            <Space size="middle">
+              {operation !== 'see' && (
+                <Button type="primary" loading={loading} htmlType="submit" onClick={newOnFinish}>
+                  提交
+                </Button>
+              )}
+              <Button htmlType="button" onClick={close}>
+                关闭
               </Button>
-            )}
-            <Button htmlType="button" onClick={close}>
-              关闭
-            </Button>
+            </Space>
           </Form.Item>
-        </Form>
-      </Drawer>
+        </Drawer>
+      </Form>
     </Sotre.Provider>
   );
 };

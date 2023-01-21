@@ -3,9 +3,10 @@ import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import DrawerForm from '@/components/DrawerForm';
 import type { DrawerFormRef, OperationType } from '@/components/DrawerForm';
-import { rolePage, roleDisable, roleEnable, roleAdd, roleUpdate } from '@/services/role';
-import { Button, Form, Input, Select } from 'antd';
-import type { RoleType } from '@/services/role';
+import { rolePage, roleDisable, roleEnable, roleAdd, roleUpdate } from '@/services/sys/role';
+import { Button, Form, Input, Select, message } from 'antd';
+import type { RoleType } from '@/services/sys/role';
+import menuStore from '@/sotre/menuStore';
 import dayjs from 'dayjs';
 import { useRef, useState } from 'react';
 import { useRequest } from 'umi';
@@ -22,9 +23,21 @@ const { Option } = Select;
 export default () => {
   const drawerFormRef = useRef<DrawerFormRef>();
   const actionRef = useRef<ProCoreActionType>();
+  const { menuListOptions, menuListValueEnum } = menuStore.useContainer();
+
   const [operation, setOperation] = useState<OperationType>('see');
-  const { run: disable, loading: disableLoading } = useRequest(roleDisable);
-  const { run: enable, loading: enableLoading } = useRequest(roleEnable);
+  const { run: disable, loading: disableLoading } = useRequest(roleDisable, {
+    onSuccess: () => {
+      message.success('操作成功');
+    },
+    manual: true,
+  });
+  const { run: enable, loading: enableLoading } = useRequest(roleEnable, {
+    onSuccess: () => {
+      message.success('操作成功');
+    },
+    manual: true,
+  });
 
   const columns: ProColumns<RoleType>[] = [
     {
@@ -55,7 +68,11 @@ export default () => {
     {
       title: '菜单权限',
       dataIndex: 'menuIds',
-      render: (_, { menuIds }) => menuIds?.join(','),
+      valueEnum: menuListValueEnum,
+      render: (node) => {
+        console.log(node);
+        return node;
+      },
     },
     {
       title: '修改时间',
@@ -83,6 +100,7 @@ export default () => {
           key="editable"
           onClick={() => {
             setOperation('idea');
+            console.log(record);
             drawerFormRef.current?.formRef?.setFieldsValue(record);
             drawerFormRef.current?.open();
           }}
@@ -105,7 +123,7 @@ export default () => {
             type="link"
             loading={disableLoading}
             onClick={() => {
-              disable(record.id!);
+              enable(record.id!);
               action?.reload();
             }}
             key="view"
@@ -117,7 +135,7 @@ export default () => {
             type="link"
             loading={enableLoading}
             onClick={() => {
-              enable(record.id!);
+              disable(record.id!);
               action?.reload();
             }}
             key="view"
@@ -134,6 +152,7 @@ export default () => {
         actionRef={actionRef}
         columns={columns}
         request={rolePage}
+        rowKey="id"
         toolBarRender={() => [
           <Button
             type="primary"
@@ -184,7 +203,7 @@ export default () => {
           label="菜单权限"
           rules={[{ required: true, message: '请输入菜单权限' }]}
         >
-          <Input placeholder="请输入菜单权限" />
+          <Select mode="multiple" placeholder="请选择菜单权限" options={menuListOptions} />
         </Form.Item>
       </DrawerForm>
     </div>

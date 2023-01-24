@@ -32,6 +32,8 @@ const codeMessage = {
 /**
  * 配置request请求时的默认参数
  */
+
+// console.log(process.env);
 const client = extend({
   errorHandler: (error) => {
     const { response } = error;
@@ -50,7 +52,7 @@ const client = extend({
     }
     return Promise.reject(error);
   }, // 默认错误处理
-  prefix: '/apis',
+  // prefix: '/apis',
   timeout: 600000,
 });
 // request拦截器, 改变url 或 options

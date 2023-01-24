@@ -31,6 +31,62 @@ declare namespace API {
     success: boolean;
     timestamp: number;
   };
+
+  type UserInfo = {
+    /**
+     * 昵称
+     */
+    nickname: string;
+    /**
+     * 用户名
+     */
+    username: string;
+  };
+
+  type AccessType = {
+    /**
+     * 	权限code
+     */
+    code: string;
+    /**
+     * 	前端路由地址
+     */
+    component: string;
+    /**
+     * 	说明
+     */
+    description: string;
+    /**
+     * 	图标
+     */
+    icon: string;
+    id: string;
+    /**
+     * 	权限名
+     */
+    name: string;
+    /**
+     * 	父级id
+     */
+    parentId: string;
+    /**
+     * 		string
+     */
+    ptype: string;
+    /**
+     * 	菜单排序
+     */
+    sort: number;
+    /**
+     * 	前端路由地址
+     */
+    url: string;
+  };
+
+  type CurrentUser = UserInfo & {
+    pathAccess: AccessType[];
+  };
+
   type RequestListReqType<T = any> = {
     pageNo: number;
     pageSize: number;

@@ -1,34 +1,17 @@
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from 'umi';
-import { history } from 'umi';
+import { history, useAccess, Access } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { getUserInfo } from './services/sys/auth';
-import type { UserType } from './services/sys/auth';
 import MenuStore from '@/sotre/menuStore';
 import defaultSettings from '../config/defaultSettings';
 import { getCookie } from '@/utils/cookies';
-import { listByUserIdApi, treeByUserIdApi } from '@/services/sys/menu';
+import Fallback from '@/pages/401';
+import { listByUserIdApi } from '@/services/sys/menu';
 
 const loginPath = '/login';
-
-export function patchRoutes(routes) {
-  console.log(routes);
-  const token = getCookie('token');
-  if (token) {
-    listByUserIdApi().then((res) => {
-      console.log(res);
-    });
-    treeByUserIdApi().then((res) => {
-      console.log(res);
-    });
-  }
-  //   // routes[0].unshift({
-  //   //   path: '/foo',
-  //   //   component: require('./routes/foo').default,
-  //   // });
-}
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -40,14 +23,20 @@ export const initialStateConfig = {
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
-  currentUser?: UserType;
+  currentUser?: API.UserInfo;
   loading?: boolean;
-  fetchUserInfo?: () => Promise<UserType | undefined>;
+  fetchUserInfo?: () => Promise<API.UserInfo | undefined>;
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await getUserInfo();
-      return msg.data;
+      const syncMsg = getUserInfo();
+      const syncPathAccess = listByUserIdApi();
+      const msg = await syncMsg;
+      const pathAccess = await syncPathAccess;
+      return {
+        ...msg.data,
+        pathAccess: pathAccess.data,
+      };
     } catch (error) {
       history.push(loginPath);
     }
@@ -79,8 +68,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
+      const token = getCookie('token');
+      // useAccess()
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (!token || (!initialState?.currentUser && location.pathname !== loginPath)) {
         history.push(loginPath);
       }
     },
@@ -101,14 +92,26 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     //     ]
     //   : [],
     menuHeaderRender: undefined,
+    postMenuData: (menuData) => {
+      const pathAccess: string[] =
+        (initialState?.currentUser as any)?.pathAccess?.map((item: API.AccessType) => item.id) ||
+        [];
+      return menuData?.filter((item) => pathAccess.includes(item.access)) || [];
+    },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children) => {
-      // if (initialState?.loading) return <PageLoading />;
+    childrenRender: (children, props) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const access = useAccess();
+      const pathname = props.location?.pathname;
+      const route = props.route?.routes?.find((item) => item.path === pathname);
       return (
         <MenuStore.Provider>
-          {children}
+          <Access accessible={access.codeJudgeAccess(route?.access)} fallback={<Fallback />}>
+            {children}
+          </Access>
+          {/* {children} */}
           {/* {!props.location?.pathname?.includes('/login') && (
             <SettingDrawer
               disableUrlParams

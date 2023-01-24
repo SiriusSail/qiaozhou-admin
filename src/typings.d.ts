@@ -36,15 +36,15 @@ declare namespace API {
     pageSize: number;
   } & T;
   type RequestListResType<T = any> = {
-    countId: string;
-    current: number;
-    maxLimit: number;
-    pages: number;
-    size: number;
-    total: number;
-    optimizeCountSql: boolean;
-    searchCount: boolean;
-    orders: { asc: boolean; column: stirng }[];
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    pages?: number;
+    size?: number;
+    total?: number;
+    optimizeCountSql?: boolean;
+    searchCount?: boolean;
+    orders?: { asc: boolean; column: stirng }[];
     records: T[];
   };
 }

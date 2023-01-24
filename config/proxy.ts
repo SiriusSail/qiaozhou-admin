@@ -17,7 +17,7 @@ export default {
       changeOrigin: true,
     },
     '/apis': {
-      target: 'http://192.168.31.229:9000',
+      target: 'http://www.chqheiyou.com',
       changeOrigin: true,
       pathRewrite: { '^/apis': '' },
     },

@@ -6,19 +6,15 @@ import { Button } from 'antd';
 import type { ActivityType } from '@/services/business/activity';
 import { useRef } from 'react';
 import { history } from 'umi';
-// code	编码	string
-// createTime	创建时间	string
-// description	描述	string
-// id	id	string
-// menuIds	菜单权限ids	array	string
-// name	角色名	string
-// status	状态 启用'ENABLE' 禁用'DISABLE'	string
-// updateTime	修改时间
 
 export default () => {
   const actionRef = useRef<ProCoreActionType>();
 
   const columns: ProColumns<ActivityType>[] = [
+    {
+      title: '商户名称',
+      dataIndex: 'merName',
+    },
     {
       title: '活动名称',
       dataIndex: 'actName',
@@ -65,14 +61,6 @@ export default () => {
       title: '红包最高金额',
       dataIndex: 'maxAmount',
       search: false,
-    },
-    {
-      title: '商户名称',
-      dataIndex: 'merName',
-    },
-    {
-      title: '商户ID',
-      dataIndex: 'merchantId',
     },
     {
       title: '红包最低金额',

@@ -5,10 +5,10 @@ import DrawerForm from '@/components/DrawerForm';
 import type { DrawerFormRef, OperationType } from '@/components/DrawerForm';
 import { rolePage, roleDisable, roleEnable, roleAdd, roleUpdate } from '@/services/sys/role';
 import { Button, Form, Input, Select, message } from 'antd';
-import type { RoleType } from '@/services/sys/role';
+import type { ResType } from '@/services/sys/role';
 import menuStore from '@/sotre/menuStore';
 import dayjs from 'dayjs';
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { useRequest } from 'umi';
 const { Option } = Select;
 // code	编码	string
@@ -39,7 +39,7 @@ export default () => {
     manual: true,
   });
 
-  const columns: ProColumns<RoleType>[] = [
+  const columns: ProColumns<ResType>[] = [
     {
       title: '角色名',
       dataIndex: 'name',
@@ -69,10 +69,6 @@ export default () => {
       title: '菜单权限',
       dataIndex: 'menuIds',
       valueEnum: menuListValueEnum,
-      render: (node) => {
-        console.log(node);
-        return node;
-      },
     },
     {
       title: '修改时间',
@@ -146,6 +142,7 @@ export default () => {
       ],
     },
   ];
+  const disabled = useMemo(() => operation === 'see', [operation]);
   return (
     <div>
       <ProTable
@@ -173,7 +170,6 @@ export default () => {
         onFinish={(value) => {
           if (operation === 'new') {
             return roleAdd(value).then((res) => {
-              console.log(res);
               actionRef.current?.reload();
               return res;
             });
@@ -183,10 +179,10 @@ export default () => {
       >
         <Form.Item noStyle name="id" />
         <Form.Item label="角色名" name="name" rules={[{ required: true, message: '请输入角色名' }]}>
-          <Input placeholder="请输入角色名" />
+          <Input disabled={disabled} placeholder="请输入角色名" />
         </Form.Item>
         <Form.Item label="状态" name="status">
-          <Select placeholder="请选择状态">
+          <Select disabled={disabled} placeholder="请选择状态">
             <Option value="ENABLE">启用</Option>
             <Option value="DISABLE">禁用</Option>
           </Select>
@@ -196,14 +192,19 @@ export default () => {
           label="描述"
           rules={[{ required: true, message: '请输入描述信息' }]}
         >
-          <Input placeholder="请输入描述信息" />
+          <Input disabled={disabled} placeholder="请输入描述信息" />
         </Form.Item>
         <Form.Item
           name="menuIds"
           label="菜单权限"
           rules={[{ required: true, message: '请输入菜单权限' }]}
         >
-          <Select mode="multiple" placeholder="请选择菜单权限" options={menuListOptions} />
+          <Select
+            disabled={disabled}
+            mode="multiple"
+            placeholder="请选择菜单权限"
+            options={menuListOptions}
+          />
         </Form.Item>
       </DrawerForm>
     </div>

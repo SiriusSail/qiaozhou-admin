@@ -87,7 +87,6 @@ client.interceptors.response.use(async (response) => {
       localStorage.removeItem('bi-X-Auth-Token');
       localStorage.removeItem('bi-oac_email');
       localStorage.removeItem('bi-oac_url');
-      //   window.__POWERED_BY_QIANKUN__ ? (window.location.href = '/#/') : router.replace('/user/login')
       return data;
     }
     if (data?.success === false) {

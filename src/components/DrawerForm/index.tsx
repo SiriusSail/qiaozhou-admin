@@ -90,21 +90,26 @@ const DrawerForm: React.FC<PropsType> = ({
           formRef.current = ref;
         }}
       >
-        <Drawer {...props} open={visible} title={drawerTitle}>
-          {children}
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Space size="middle">
-              {operation !== 'see' && (
-                <Button type="primary" loading={loading} htmlType="submit" onClick={newOnFinish}>
-                  提交
+        <Drawer
+          {...props}
+          open={visible}
+          title={drawerTitle}
+          footer={[
+            <Form.Item key="1" wrapperCol={{ offset: 8, span: 16 }}>
+              <Space size="middle">
+                {operation !== 'see' && (
+                  <Button type="primary" loading={loading} htmlType="submit" onClick={newOnFinish}>
+                    提交
+                  </Button>
+                )}
+                <Button htmlType="button" onClick={close}>
+                  关闭
                 </Button>
-              )}
-              <Button htmlType="button" onClick={close}>
-                关闭
-              </Button>
-            </Space>
-          </Form.Item>
+              </Space>
+            </Form.Item>,
+          ]}
+        >
+          {children}
         </Drawer>
       </Form>
     </Sotre.Provider>

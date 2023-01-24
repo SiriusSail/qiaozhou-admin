@@ -5,8 +5,16 @@ import { useMemo } from 'react';
 
 type ValueEnum = Record<string, string>;
 export default createContainer(() => {
+  // 菜单枚举
   const { data: menuList, run: getMenuList } = useRequest(getMenuListAPi);
+  // const { data: listBy, run: listByUserId } = useRequest(listByUserIdApi, {
+  //   manual: !getCookie('token'),
+  // });
+  // const { data: treeBy, run: treeByUserId } = useRequest(treeByUserIdApi, {
+  //   manual: !getCookie('token'),
+  // });
 
+  // console.log(listBy, treeBy, !getCookie('token'));
   const menuListValueEnum = useMemo(() => {
     const valueEnum: ValueEnum = {};
     menuList?.forEach((item) => {

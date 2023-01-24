@@ -62,7 +62,6 @@ export default () => {
  */
 import { Button, Menu } from 'antd';
 import React from 'react';
-import HeaderSearch from '@/components/HeaderSearch';
 
 export default () => {
   return (
@@ -114,7 +113,6 @@ export default () => {
  */
 import { message } from 'antd';
 import React from 'react';
-import NoticeIcon from '@/components/NoticeIcon/NoticeIcon';
 
 export default () => {
   const list = [

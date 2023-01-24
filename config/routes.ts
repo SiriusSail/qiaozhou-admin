@@ -1,51 +1,31 @@
 ﻿export default [
   {
+    layout: false,
+    name: 'login',
+    path: '/login',
+    component: './login',
+    hideInMenu: true,
+  },
+  {
     path: '/user',
     layout: false,
     routes: [
       {
-        name: 'login',
-        path: '/user/login',
-        component: './user/Login',
-      },
-      {
-        component: './404',
-      },
-    ],
-  },
-  {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    component: './Admin',
-    routes: [
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
+        name: 'register-result',
         icon: 'smile',
-        component: './Welcome',
+        path: '/user/register-result',
+        component: './user/register-result',
       },
       {
-        component: './404',
+        name: 'register',
+        icon: 'smile',
+        path: '/user/register',
+        component: './user/register',
+      },
+      {
+        component: '404',
       },
     ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
-  },
-  {
-    path: '/',
-    redirect: '/welcome',
   },
   {
     component: './404',

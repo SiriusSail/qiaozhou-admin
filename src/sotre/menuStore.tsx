@@ -2,11 +2,14 @@ import { createContainer } from 'unstated-next';
 import { getMenuListAPi } from '@/services/sys/menu';
 import { useRequest } from 'umi';
 import { useMemo } from 'react';
+import { getCookie } from '@/utils/cookies';
 
 type ValueEnum = Record<string, string>;
 export default createContainer(() => {
   // 菜单枚举
-  const { data: menuList, run: getMenuList } = useRequest(getMenuListAPi);
+  const { data: menuList, run: getMenuList } = useRequest(getMenuListAPi, {
+    manual: !getCookie('token'),
+  });
   // const { data: listBy, run: listByUserId } = useRequest(listByUserIdApi, {
   //   manual: !getCookie('token'),
   // });

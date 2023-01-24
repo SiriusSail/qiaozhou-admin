@@ -25,14 +25,12 @@ export default {
     '/api/': {
       target: 'https://proapi.azurewebsites.net',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
     },
   },
   pre: {
     '/backend/': {
       target: 'http://www.chqheiyou.com',
       changeOrigin: true,
-      pathRewrite: { '^/apis': '' },
     },
   },
 };

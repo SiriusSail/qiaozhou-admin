@@ -63,6 +63,13 @@ export default defineConfig({
       ],
     },
     {
+      name: '首页广告',
+      icon: 'table',
+      path: '/banner',
+      access: '6000',
+      component: './banner',
+    },
+    {
       name: '角色列表',
       icon: 'table',
       path: '/role',

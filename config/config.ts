@@ -131,7 +131,7 @@ export default defineConfig({
       name: '首页广告',
       icon: 'video-camera',
       path: '/banner',
-      access: '6000',
+      access: '7000',
       component: './banner',
     },
     {

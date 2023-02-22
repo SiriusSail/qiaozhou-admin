@@ -65,7 +65,6 @@ export const bannerPage = (data: API.RequestListReqType) =>
  * 添加banner
  */
 export const addBanner = ({ file, ...value }: ReqType) => {
-  console.log(value, 3333);
   const formData = new FormData();
   Object.entries(value)
     .filter(([, item]) => !!item)
@@ -73,10 +72,26 @@ export const addBanner = ({ file, ...value }: ReqType) => {
       formData.append(key, item);
     });
   formData.append('file', file[0].originFileObj!);
-  console.log(formData);
-  // return Promise.resolve();
 
   return request.post<ResType>(`/backend/business/banner/add`, {
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+/**
+ * 修改banner
+ */
+export const updateBanner = (value: Omit<ReqType, 'file'>) => {
+  const formData = new FormData();
+  Object.entries(value)
+    .filter(([, item]) => !!item)
+    .forEach(([key, item]) => {
+      formData.append(key, item);
+    });
+
+  return request.post<ResType>(`/backend/business/banner/update`, {
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',

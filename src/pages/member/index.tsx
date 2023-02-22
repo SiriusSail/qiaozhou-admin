@@ -3,16 +3,17 @@ import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import { memberPage } from '@/services/business/member';
 import type { ResType } from '@/services/business/member';
+import menuStore from '@/sotre/menuStore';
 import { useRef } from 'react';
 
 export default () => {
   const actionRef = useRef<ProCoreActionType>();
+  const { campusList } = menuStore.useContainer();
 
   const columns: ProColumns<ResType>[] = [
     {
       title: '会员名称',
       dataIndex: 'menberName',
-      search: false,
     },
     {
       title: '会员类型',
@@ -23,6 +24,13 @@ export default () => {
       title: '用户昵称',
       dataIndex: 'nickname',
       search: false,
+    },
+    {
+      title: '校区',
+      dataIndex: 'campusId',
+      valueEnum: campusList,
+      valueType: 'select',
+      hideInTable: true,
     },
     {
       title: '校区',

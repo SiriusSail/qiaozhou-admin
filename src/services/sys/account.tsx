@@ -78,3 +78,11 @@ export const accountAdd = (data: AccountType) => request.post(`/backend/sys/acco
  */
 export const accountUpdate = (data: AccountType) =>
   request.post(`/backend/sys/account/update`, { data });
+/**
+ * 重置密码
+ */
+export const resetPassword = (data: {
+  accountId?: string;
+  confirmPassword?: string;
+  password?: string;
+}) => request.post(`/backend/sys/account/resetPassword`, { data });

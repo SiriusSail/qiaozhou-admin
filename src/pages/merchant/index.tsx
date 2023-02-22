@@ -1,6 +1,7 @@
 import ProTable from '@/components/ProTable';
 import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
+import menuStore from '@/sotre/menuStore';
 import {
   merchantPage,
   merchantDisable,
@@ -16,6 +17,7 @@ import { useRequest } from 'umi';
 export default () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectData, setSelectData] = useState<ResType>();
+  const { campusList, menuMap } = menuStore.useContainer();
   const actionRef = useRef<ProCoreActionType>();
 
   // 禁用
@@ -63,15 +65,20 @@ export default () => {
     {
       title: '商铺名称',
       dataIndex: 'merName',
-      search: false,
     },
     {
       title: '商户编号',
       dataIndex: 'merNo',
-      search: false,
     },
     {
-      title: '商铺负责人',
+      title: '校区',
+      dataIndex: 'campusId',
+      valueEnum: campusList,
+      valueType: 'select',
+      hideInTable: true,
+    },
+    {
+      title: '负责人',
       dataIndex: 'merPerson',
       search: false,
     },
@@ -83,7 +90,11 @@ export default () => {
     {
       title: '商铺类型',
       dataIndex: 'merTypeName',
-      search: false,
+      valueType: 'select',
+      formItemProps: {
+        name: 'merType',
+      },
+      valueEnum: menuMap.merType,
     },
     {
       title: '创建人',
@@ -96,9 +107,10 @@ export default () => {
       search: false,
     },
     {
-      title: '是否通过审核',
+      title: '审核状态',
       dataIndex: 'examine',
-      search: false,
+      valueType: 'select',
+      valueEnum: menuMap.examine,
     },
     {
       title: '商铺地址',
@@ -113,17 +125,8 @@ export default () => {
     {
       title: '是否启用',
       dataIndex: 'status',
-      search: false,
-    },
-    {
-      title: '修改人',
-      dataIndex: 'updateBy',
-      search: false,
-    },
-    {
-      title: '修改时间',
-      dataIndex: 'updateTime',
-      search: false,
+      valueType: 'select',
+      valueEnum: menuMap.status,
     },
     {
       title: '操作',

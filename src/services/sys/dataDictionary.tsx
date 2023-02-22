@@ -4,11 +4,11 @@ export type ResType = {
   /**
    *   数据编码
    */
-  dataCode?: string;
+  dataCode: string;
   /**
    *   数据名称
    */
-  dataValue?: string;
+  dataValue: string;
   /**
    *   id
    */
@@ -42,7 +42,7 @@ export const dataDictionaryList = () =>
   request.get<ResType[]>('/backend/sys/dataDictionary/leve1List');
 
 /**
- * 查询字典数据
+ * 查询二级字典数据
  */
 export const dataDictionaryCodeList = (dataCode?: string) =>
   request.get<ResType[]>(`/backend/sys/dataDictionary/childList/${dataCode}`);
@@ -50,12 +50,12 @@ export const dataDictionaryCodeList = (dataCode?: string) =>
  * 禁用
  */
 export const dataDictionaryDisable = (roleId?: string) =>
-  request.get(`/backend/sys/role/dataDictionary/${roleId}`);
+  request.get(`/backend/sys/dataDictionary/disable/${roleId}`);
 /**
  * 启用
  */
 export const dataDictionaryEnable = (roleId?: string) =>
-  request.get(`/backend/sys/role/dataDictionary/${roleId}`);
+  request.get(`/backend/sys/dataDictionary/enable/${roleId}`);
 /**
  * 新增
  */

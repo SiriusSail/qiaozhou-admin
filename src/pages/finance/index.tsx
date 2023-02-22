@@ -6,22 +6,16 @@ import type { ResType } from '@/services/sys/log';
 export default () => {
   const columns: ProColumns<ResType>[] = [
     {
-      title: '操作地址',
-      dataIndex: 'ip',
-      search: false,
-    },
-    {
-      title: '日志类型',
-      dataIndex: 'logType',
-      search: false,
-    },
-    {
       title: '操作人员',
       dataIndex: 'operName',
       search: false,
     },
     {
-      title: '操作时间',
+      title: '校区',
+      dataIndex: 'logType',
+    },
+    {
+      title: '时间',
       dataIndex: 'operTime',
       hideInTable: true,
       valueType: 'dateRange',

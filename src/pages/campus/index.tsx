@@ -3,10 +3,11 @@ import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import DrawerForm from '@/components/DrawerForm';
 import type { DrawerFormRef, OperationType } from '@/components/DrawerForm';
-import { campusPage, addCampus, updateCampus } from '@/services/business/campus';
-import { Button, Form, Input, Select } from 'antd';
+import { campusPage, addCampus, updateCampus, deleteCampus } from '@/services/business/campus';
+import { Button, Form, Input, Select, message, Popconfirm } from 'antd';
 import type { CampusType } from '@/services/business/campus';
 import { useRef, useState, useMemo } from 'react';
+import { useRequest } from 'umi';
 // code	编码	string
 // createTime	创建时间	string
 // description	描述	string
@@ -19,6 +20,14 @@ import { useRef, useState, useMemo } from 'react';
 export default () => {
   const drawerFormRef = useRef<DrawerFormRef>();
   const actionRef = useRef<ProCoreActionType>();
+
+  const { run: del, loading } = useRequest(deleteCampus, {
+    manual: true,
+    onSuccess: () => {
+      message.success('删除成功');
+      actionRef.current?.reload();
+    },
+  });
 
   const [operation, setOperation] = useState<OperationType>('see');
 
@@ -50,6 +59,11 @@ export default () => {
     {
       title: '描述',
       dataIndex: 'description',
+      search: false,
+    },
+    {
+      title: '排序',
+      dataIndex: 'sort',
       search: false,
     },
     {
@@ -95,6 +109,19 @@ export default () => {
         >
           查看
         </Button>,
+        <Popconfirm
+          key="del"
+          title="是否删除该校区"
+          onConfirm={() => {
+            del(record.id!);
+          }}
+          okText="是"
+          cancelText="否"
+        >
+          <Button loading={loading} type="link" danger key="dele">
+            删除
+          </Button>
+        </Popconfirm>,
       ],
     },
   ];
@@ -145,6 +172,9 @@ export default () => {
 
         <Form.Item name="groupId" label="分组">
           <Select disabled={disabled} mode="multiple" placeholder="请选择分组" options={[]} />
+        </Form.Item>
+        <Form.Item name="sort" label="排序">
+          <Input disabled={disabled} placeholder="请输入排序" />
         </Form.Item>
         <Form.Item label="纬度" name="campusLng">
           <Input disabled={disabled} placeholder="请输入纬度" />

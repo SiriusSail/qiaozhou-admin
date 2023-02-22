@@ -7,13 +7,15 @@ import {
   dataDictionaryDisable,
   dataDictionaryEnable,
   dataDictionaryAdd,
-  dataDictionaryList,
   dataDictionaryPage,
   dataDictionaryUpdate,
 } from '@/services/sys/dataDictionary';
-import { Button, message, Modal } from 'antd';
+import { Button, message, Modal, Form, Input, Select } from 'antd';
 import type { ResType } from '@/services/sys/dataDictionary';
+import type { DrawerFormRef } from '@/components/DrawerForm';
 import { useRequest } from 'umi';
+import menuStore from '@/sotre/menuStore';
+import DrawerForm from '@/components/DrawerForm';
 // code	编码	string
 // createTime	创建时间	string
 // description	描述	string
@@ -25,6 +27,14 @@ import { useRequest } from 'umi';
 
 export default () => {
   const actionRef = useRef<ProCoreActionType>();
+  const drawerFormRef = useRef<DrawerFormRef>();
+
+  const {
+    dataDictionaryList: dataSource,
+    dataSourceValueEnum,
+    dataDictionaryListLoading,
+    getDataDictionaryList,
+  } = menuStore.useContainer();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [parentId, setParentId] = useState<string>();
   const { run: disable, loading: disableLoading } = useRequest(dataDictionaryDisable, {
@@ -40,29 +50,15 @@ export default () => {
     manual: true,
   });
 
-  const {
-    data: dataSource,
-    loading: dataDictionaryListLoading,
-    run: dataDictionaryListRun,
-  } = useRequest(dataDictionaryList, {});
-
-  const dataSourceValueEnum = useMemo(() => {
-    const valueEnum: Record<string, string> = {};
-    dataSource?.forEach((item) => {
-      valueEnum[item.id!] = `${item.dataValue}: ${item.id}`;
-    });
-    return valueEnum;
-  }, [dataSource]);
-
   const columns: ProColumns<ResType>[] = useMemo(
     () => [
       {
-        title: '数据编码',
-        dataIndex: 'dataCode',
-      },
-      {
         title: '数据名称',
         dataIndex: 'dataValue',
+      },
+      {
+        title: '数据编码',
+        dataIndex: 'dataCode',
       },
       {
         title: '父级id',
@@ -125,10 +121,36 @@ export default () => {
           >
             字典详情
           </Button>,
+
+          record.status === 'DISABLE' ? (
+            <Button
+              type="link"
+              loading={disableLoading}
+              onClick={() => {
+                enable(record.id!);
+                getDataDictionaryList();
+              }}
+              key="view"
+            >
+              启用
+            </Button>
+          ) : (
+            <Button
+              type="link"
+              loading={enableLoading}
+              onClick={() => {
+                disable(record.id!);
+                getDataDictionaryList();
+              }}
+              key="view"
+            >
+              禁用
+            </Button>
+          ),
         ],
       },
     ];
-  }, [columns]);
+  }, [columns, disable, disableLoading, enable, enableLoading, getDataDictionaryList]);
 
   const chilendColumns = useMemo<ProColumns<ResType>[]>(() => {
     return [
@@ -181,18 +203,26 @@ export default () => {
     <div>
       <ProTable
         options={{
-          reload: dataDictionaryListRun,
+          reload: getDataDictionaryList,
         }}
         columns={parentColumns}
         loading={dataDictionaryListLoading}
         dataSource={dataSource}
         rowKey="id"
         pagination={false}
+        toolBarRender={() => [
+          <Button type="primary" key="primary" onClick={drawerFormRef.current?.open}>
+            新增
+          </Button>,
+        ]}
       />
       <Modal
         title="字典详情"
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          setIsModalOpen(false);
+          getDataDictionaryList();
+        }}
         width="80%"
         footer={<Button onClick={() => setIsModalOpen(false)}>关闭</Button>}
       >
@@ -203,7 +233,11 @@ export default () => {
           editable={{
             onSave: async (key, { id, ...rows }) => {
               const dataDictionaryRequest = id === 'new' ? dataDictionaryAdd : dataDictionaryUpdate;
-              await dataDictionaryRequest({ parentId, ...rows }).then((res) => {
+              await dataDictionaryRequest({
+                parentId,
+                ...rows,
+                id: id === 'new' ? undefined : id,
+              }).then((res) => {
                 actionRef.current?.reload();
                 return res;
               });
@@ -215,14 +249,6 @@ export default () => {
             defaultPageSize: 20,
           }}
           request={(params) => dataDictionaryPage({ parentId, ...params })}
-          // request={() =>
-          //   dataDictionaryCodeList(parentId!).then((res) => ({
-          //     ...res,
-          //     data: {
-          //       records: res.data,
-          //     },
-          //   }))
-          // }
           rowKey="id"
           recordCreatorProps={{
             record: () => {
@@ -231,6 +257,50 @@ export default () => {
           }}
         />
       </Modal>
+
+      <DrawerForm
+        drawerFormRef={drawerFormRef}
+        titleAfter="角色信息"
+        operation="new"
+        onFinish={(value) => {
+          return dataDictionaryAdd(value).then((res) => {
+            getDataDictionaryList();
+            return res;
+          });
+        }}
+      >
+        <Form.Item noStyle name="parentId" initialValue="0" />
+        <Form.Item
+          label="数据名称"
+          name="dataValue"
+          rules={[{ required: true, message: '请输入数据名称' }]}
+        >
+          <Input placeholder="请输入数据名称" />
+        </Form.Item>
+
+        <Form.Item
+          label="数据编码"
+          name="dataCode"
+          rules={[{ required: true, message: '请输入数据编码' }]}
+        >
+          <Input placeholder="请输入数据编码" />
+        </Form.Item>
+        <Form.Item name="status" label="状态">
+          <Select
+            placeholder="请选择状态"
+            options={[
+              {
+                value: 'ENABLE',
+                label: '启用',
+              },
+              {
+                value: 'DISABLE',
+                label: '禁用',
+              },
+            ]}
+          />
+        </Form.Item>
+      </DrawerForm>
     </div>
   );
 };

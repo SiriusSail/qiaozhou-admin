@@ -9,6 +9,7 @@ import {
   accountEnable,
   accountAdd,
   accountUpdate,
+  resetPassword,
 } from '@/services/sys/account';
 import { Button, Form, Input, Select, message } from 'antd';
 import type { AccountType } from '@/services/sys/account';
@@ -28,6 +29,7 @@ const { Option } = Select;
 
 export default () => {
   const drawerFormRef = useRef<DrawerFormRef>();
+  const resetFormRef = useRef<DrawerFormRef>();
   const actionRef = useRef<ProCoreActionType>();
   const [operation, setOperation] = useState<OperationType>('see');
   const { run: disable, loading: disableLoading } = useRequest(accountDisable, {
@@ -63,6 +65,7 @@ export default () => {
     {
       title: '创建人',
       dataIndex: 'createBy',
+      search: false,
     },
     // {
     //   title: '角色名',
@@ -96,6 +99,7 @@ export default () => {
       render: (_, { createTime }) => {
         return createTime ? dayjs(createTime).format('YYYY-MM-DD') : '-';
       },
+      search: false,
     },
     {
       title: '修改时间',
@@ -170,6 +174,20 @@ export default () => {
                   禁用
                 </Button>
               ),
+
+              <Button
+                type="link"
+                onClick={() => {
+                  setOperation('see');
+                  resetFormRef.current?.formRef?.setFieldsValue({
+                    accountId: record.id!,
+                  });
+                  resetFormRef.current?.open();
+                }}
+                key="view"
+              >
+                重置密码
+              </Button>,
             ]}
           </div>
         );
@@ -203,7 +221,6 @@ export default () => {
         onFinish={(value) => {
           if (operation === 'new') {
             return accountAdd(value).then((res) => {
-              console.log(res);
               actionRef.current?.reload();
               return res;
             });
@@ -212,14 +229,6 @@ export default () => {
         }}
       >
         <Form.Item noStyle name="id" />
-        <Form.Item noStyle name="id" />
-        <Form.Item
-          label="用户名"
-          name="username"
-          rules={[{ required: true, message: '请输入用户名' }]}
-        >
-          <Input placeholder="请输入用户名" />
-        </Form.Item>
         <Form.Item
           label="用户昵称"
           name="nickname"
@@ -227,6 +236,22 @@ export default () => {
         >
           <Input placeholder="请输入用户昵称" />
         </Form.Item>
+        <Form.Item
+          label="用户名"
+          name="username"
+          rules={[{ required: true, message: '请输入用户名' }]}
+        >
+          <Input placeholder="请输入用户名" />
+        </Form.Item>
+        {operation === 'new' && (
+          <Form.Item
+            label="密码"
+            name="password"
+            rules={[{ required: true, message: '请输入密码' }]}
+          >
+            <Input.Password placeholder="请输入密码" />
+          </Form.Item>
+        )}
         <Form.Item label="角色" name="roleIds" rules={[{ required: true, message: '请选择角色' }]}>
           <Select mode="multiple" placeholder="请选择角色" options={roleListData} />
         </Form.Item>
@@ -236,12 +261,32 @@ export default () => {
             <Option value="DISABLE">禁用</Option>
           </Select>
         </Form.Item>
-        <Form.Item
-          name="description"
-          label="描述"
-          rules={[{ required: true, message: '请输入描述信息' }]}
-        >
+        <Form.Item name="description" label="描述">
           <Input placeholder="请输入描述信息" />
+        </Form.Item>
+      </DrawerForm>
+      <DrawerForm
+        drawerFormRef={resetFormRef}
+        titleAfter="密码"
+        operation="idea"
+        onFinish={(value) => {
+          return resetPassword(value).then(() => actionRef.current?.reload());
+        }}
+      >
+        <Form.Item noStyle name="accountId" />
+        <Form.Item
+          label="新密码"
+          name="password"
+          rules={[{ required: true, message: '请输入新密码' }]}
+        >
+          <Input.Password placeholder="请输入新密码" />
+        </Form.Item>
+        <Form.Item
+          label="确认"
+          name="confirmPassword"
+          rules={[{ required: true, message: '请输入confirmPassword' }]}
+        >
+          <Input.Password placeholder="请输入confirmPassword" />
         </Form.Item>
       </DrawerForm>
     </div>

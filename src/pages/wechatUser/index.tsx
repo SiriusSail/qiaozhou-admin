@@ -2,9 +2,10 @@ import ProTable from '@/components/ProTable';
 import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import { userPage, userDisable, userEnable } from '@/services/business/user';
-import { Button, message } from 'antd';
+import { Button, message, Image } from 'antd';
 import type { ResType } from '@/services/business/user';
 import { useRef } from 'react';
+import menuStore from '@/sotre/menuStore';
 import { useRequest } from 'umi';
 // code	编码	string
 // createTime	创建时间	string
@@ -18,6 +19,7 @@ import { useRequest } from 'umi';
 export default () => {
   const actionRef = useRef<ProCoreActionType>();
 
+  const { menuMap } = menuStore.useContainer();
   const { run: disable, loading: disableLoading } = useRequest(userDisable, {
     onSuccess: () => {
       message.success('操作成功');
@@ -36,6 +38,9 @@ export default () => {
       title: '头像',
       dataIndex: 'avatarurl',
       search: false,
+      render: (node, entity) => {
+        return <Image width={50} src={entity.avatarurl} />;
+      },
     },
     {
       title: '用户昵称',
@@ -44,6 +49,7 @@ export default () => {
     {
       title: '性别',
       dataIndex: 'gender',
+      search: false,
     },
     {
       title: '手机号',
@@ -57,6 +63,7 @@ export default () => {
     {
       title: '城市',
       dataIndex: 'city',
+      search: false,
     },
     {
       title: '省份',
@@ -76,11 +83,8 @@ export default () => {
     {
       title: '状态',
       dataIndex: 'status',
-      search: false,
-      valueEnum: {
-        ENABLE: '启用',
-        DISABLE: '禁用',
-      },
+      valueType: 'select',
+      valueEnum: menuMap.status,
     },
     {
       title: '修改人',

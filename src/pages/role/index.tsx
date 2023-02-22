@@ -69,6 +69,7 @@ export default () => {
       title: '菜单权限',
       dataIndex: 'menuIds',
       valueEnum: menuListValueEnum,
+      search: false,
     },
     {
       title: '修改时间',

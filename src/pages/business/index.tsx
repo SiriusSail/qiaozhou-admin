@@ -2,6 +2,7 @@ import ProTable from '@/components/ProTable';
 import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import { activityPage } from '@/services/business/activity';
+import menuStore from '@/sotre/menuStore';
 import { Button } from 'antd';
 import type { ActivityType } from '@/services/business/activity';
 import { useRef } from 'react';
@@ -9,6 +10,7 @@ import { history } from 'umi';
 
 export default () => {
   const actionRef = useRef<ProCoreActionType>();
+  const { campusList } = menuStore.useContainer();
 
   const columns: ProColumns<ActivityType>[] = [
     {
@@ -39,8 +41,16 @@ export default () => {
       search: false,
     },
     {
+      title: '校区',
+      dataIndex: 'campusId',
+      valueEnum: campusList,
+      valueType: 'select',
+      hideInTable: true,
+    },
+    {
       title: '活动状态',
       dataIndex: 'actStatus',
+      search: false,
     },
     {
       title: '创建人',

@@ -3,8 +3,8 @@ import type { ProColumns } from '@/components/ProTable';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import DrawerForm from '@/components/DrawerForm';
 import type { DrawerFormRef, OperationType } from '@/components/DrawerForm';
-import { bannerPage, addBanner, deleteBanner } from '@/services/business/banner';
-import { Button, Form, Input, Select, Radio, Upload, Modal } from 'antd';
+import { bannerPage, addBanner, deleteBanner, updateBanner } from '@/services/business/banner';
+import { Button, Form, Input, Select, Radio, Upload, Modal, Image } from 'antd';
 import type { UploadFile } from 'antd';
 import type { ResType } from '@/services/business/banner';
 import { useRef, useState, useMemo } from 'react';
@@ -40,13 +40,17 @@ export default () => {
       search: false,
     },
     {
+      title: '跳转链接类型',
+      dataIndex: 'jumpLinkType',
+      search: false,
+    },
+    {
       title: '是否显示',
       dataIndex: 'showDescription',
-      search: false,
-      // valueEnum: {
-      //   1: '显示',
-      //   2: '不显示',
-      // },
+      valueEnum: {
+        1: '显示',
+        2: '不显示',
+      },
     },
     {
       title: '类型',
@@ -58,6 +62,14 @@ export default () => {
       // },
     },
     {
+      title: '预览',
+      dataIndex: 'url',
+      search: false,
+      render: (node, entity) => {
+        return <Image width={50} src={entity.url} />;
+      },
+    },
+    {
       title: '创建时间',
       dataIndex: 'createTime',
       search: false,
@@ -67,6 +79,29 @@ export default () => {
       valueType: 'option',
       key: 'option',
       render: (text, record) => [
+        <Button
+          type="link"
+          key="editable"
+          onClick={() => {
+            setOperation('idea');
+            console.log(record);
+            drawerFormRef.current?.formRef?.setFieldsValue(record);
+            drawerFormRef.current?.open();
+          }}
+        >
+          编辑
+        </Button>,
+        <Button
+          type="link"
+          onClick={() => {
+            setOperation('see');
+            drawerFormRef.current?.formRef?.setFieldsValue(record);
+            drawerFormRef.current?.open();
+          }}
+          key="view"
+        >
+          查看
+        </Button>,
         <Button
           type="link"
           key="editable"
@@ -123,13 +158,13 @@ export default () => {
         open={true}
         operation={operation}
         onFinish={(value) => {
-          // if (operation === 'new') {
-          return addBanner(value).then((res) => {
-            actionRef.current?.reload();
-            return res;
-          });
-          // }
-          // return updateCampus(value).then(() => actionRef.current?.reload());
+          if (operation === 'new') {
+            return addBanner(value).then((res) => {
+              actionRef.current?.reload();
+              return res;
+            });
+          }
+          return updateBanner(value).then(() => actionRef.current?.reload());
         }}
       >
         <Form.Item noStyle name="id" />
@@ -144,6 +179,28 @@ export default () => {
         <Form.Item label="排序" name="sort">
           <Input disabled={disabled} placeholder="请输入排序" />
         </Form.Item>
+
+        <Form.Item name="jumpLinkType" label="跳转链接类型">
+          <Select
+            disabled={disabled}
+            placeholder="请选择跳转链接类型"
+            options={[
+              {
+                label: '小程序内部页面',
+                value: 1,
+              },
+              {
+                label: '外部网页',
+                value: 2,
+              },
+              {
+                label: '其他小程序',
+                value: 2,
+              },
+            ]}
+          />
+        </Form.Item>
+
         <Form.Item label="跳转链接" name="jumpLink">
           <Input disabled={disabled} placeholder="请输入跳转链接" />
         </Form.Item>
@@ -151,7 +208,7 @@ export default () => {
         <Form.Item name="type" initialValue={1} label="轮播图类型">
           <Select
             disabled={disabled}
-            placeholder="请选择分组"
+            placeholder="请选择轮播图类型"
             options={[
               {
                 label: '首页轮播图',
@@ -170,23 +227,25 @@ export default () => {
             <Radio value={0}>不显示</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          label="选择图片"
-          name="file"
-          normalize={(value) => {
-            setFiles(value.fileList);
-            return value.fileList;
-          }}
-        >
-          <Upload maxCount={1} onPreview={handlePreview} listType="picture-card">
-            {files.length === 0 && (
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            )}
-          </Upload>
-        </Form.Item>
+        {operation === 'new' && (
+          <Form.Item
+            label="选择图片"
+            name="file"
+            normalize={(value) => {
+              setFiles(value.fileList);
+              return value.fileList;
+            }}
+          >
+            <Upload maxCount={1} onPreview={handlePreview} listType="picture-card">
+              {files.length === 0 && (
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </Form.Item>
+        )}
       </DrawerForm>
       <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
         <img alt="example" style={{ width: '100%' }} src={previewImage} />

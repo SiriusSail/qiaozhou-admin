@@ -46,19 +46,22 @@ export type CampusType = {
 type CampusPageReq = {
   campusName?: string;
 };
+
+type CampusMenu = {
+  campusName: string;
+  id: string;
+};
 /**
- * 分页查询活动列表
+ * 分页查询校区列表
  */
 export const campusPage = (data: API.RequestListReqType<CampusPageReq>) =>
   request.post<API.RequestListResType<CampusType>>('/backend/business/campus/page', { data });
 
 /**
- * 查询活动列表
+ * 查询校区列表
  */
-export const campusList = (data: API.RequestListReqType<CampusPageReq>) =>
-  request.post<API.RequestListResType<CampusType>>('/backend/business/campus/findCampusList', {
-    data,
-  });
+export const campusList = () =>
+  request.get<CampusMenu[]>('/backend/business/campus/findCampusList');
 
 /**
  * 添加校区
@@ -66,7 +69,13 @@ export const campusList = (data: API.RequestListReqType<CampusPageReq>) =>
 export const addCampus = (data: CampusType) =>
   request.post<CampusType>(`/backend/business/campus/add`, { data });
 /**
- * 添加校区
+ * 更新校区
  */
 export const updateCampus = (data: CampusType) =>
   request.post<CampusType>(`/backend/business/campus/update`, { data });
+
+/**
+ * 删除校区
+ */
+export const deleteCampus = (campusId: string) =>
+  request.delete<CampusType>(`/backend/business/campus/delete/${campusId}`);

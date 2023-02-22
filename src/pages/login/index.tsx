@@ -54,7 +54,7 @@ const Login: React.FC = () => {
         if (!history) return;
         const { query } = history.location;
         const { redirect } = query as { redirect: string };
-        history.push(redirect || '/');
+        history.push(redirect || '/finance');
         return;
       }
       // 如果失败去设置用户错误信息

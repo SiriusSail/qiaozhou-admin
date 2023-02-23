@@ -1,18 +1,22 @@
 import ProTable from '@/components/ProTable';
 import type { ProColumns } from '@/components/ProTable';
-import { logPage } from '@/services/sys/log';
+import { chargeStatisticsPage } from '@/services/business/chargeStatistics';
 import type { ResType } from '@/services/sys/log';
+import menuStore from '@/sotre/menuStore';
 
 export default () => {
+  const { campusList } = menuStore.useContainer();
   const columns: ProColumns<ResType>[] = [
-    {
-      title: '操作人员',
-      dataIndex: 'operName',
-      search: false,
-    },
+    // {
+    //   title: '数据ID',
+    //   dataIndex: 'id',
+    //   search: false,
+    // },
     {
       title: '校区',
-      dataIndex: 'logType',
+      dataIndex: 'campusId',
+      valueEnum: campusList,
+      valueType: 'select',
     },
     {
       title: '时间',
@@ -23,32 +27,20 @@ export default () => {
         transform: (value: any) => ({ startTime: value[0], endTime: value[1] }),
       },
     },
+    // {
+    //   title: '总金额',
+    //   dataIndex: 'allAmount',
+    //   search: false,
+    // },
     {
-      title: '请求方式',
-      dataIndex: 'requestMethod',
+      title: '所有金额',
+      dataIndex: 'totalAmount',
       search: false,
-    },
-    {
-      title: '操作状态',
-      dataIndex: 'status',
-      valueEnum: {
-        0: '正常',
-        1: '异常',
-      },
-    },
-    {
-      title: '标题',
-      dataIndex: 'title',
-      search: false,
-    },
-    {
-      title: '请求url',
-      dataIndex: 'url',
     },
   ];
   return (
     <div>
-      <ProTable columns={columns} request={logPage} rowKey="id" />
+      <ProTable columns={columns} request={chargeStatisticsPage} rowKey="id" />
     </div>
   );
 };

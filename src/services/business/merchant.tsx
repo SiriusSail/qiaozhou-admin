@@ -119,6 +119,11 @@ export const merchantExamineeNotPass = (merchantId?: string) =>
  */
 export const merchantExamineePass = (merchantId?: string) =>
   request.get(`/backend/business/merchant/examineePass/${merchantId}`);
+/**
+ * 商户删除
+ */
+export const merchantDelete = (merchantId?: string) =>
+  request.get(`/backend/business/merchant/delete/${merchantId}`);
 // /**
 //  * 新增
 //  */

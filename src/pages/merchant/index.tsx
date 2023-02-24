@@ -7,9 +7,10 @@ import {
   merchantDisable,
   merchantEnable,
   merchantExamineeNotPass,
+  merchantDelete,
   merchantExamineePass,
 } from '@/services/business/merchant';
-import { Button, Space, Descriptions, message, Drawer } from 'antd';
+import { Button, Space, Descriptions, message, Drawer, Popconfirm } from 'antd';
 import type { ResType } from '@/services/business/merchant';
 import { useRef, useState } from 'react';
 import { useRequest } from 'umi';
@@ -24,6 +25,7 @@ export default () => {
   const { run: disable, loading: disableLoading } = useRequest(merchantDisable, {
     onSuccess: () => {
       message.success('操作成功');
+      actionRef.current?.reload();
     },
     manual: true,
   });
@@ -31,6 +33,15 @@ export default () => {
   const { run: enable, loading: enableLoading } = useRequest(merchantEnable, {
     onSuccess: () => {
       message.success('操作成功');
+      actionRef.current?.reload();
+    },
+    manual: true,
+  });
+  // 启用
+  const { run: del, loading: delLoading } = useRequest(merchantDelete, {
+    onSuccess: () => {
+      message.success('删除成功');
+      actionRef.current?.reload();
     },
     manual: true,
   });
@@ -168,6 +179,21 @@ export default () => {
             禁用
           </Button>
         ),
+
+        <Popconfirm
+          key="del"
+          title="是否删除该商家"
+          onConfirm={() => {
+            del(record.id!);
+          }}
+          okText="是"
+          cancelText="否"
+        >
+          <Button type="link" danger loading={delLoading} key="view">
+            删除
+          </Button>
+        </Popconfirm>,
+        ,
       ],
     },
   ];

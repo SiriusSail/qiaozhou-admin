@@ -66,7 +66,7 @@ export default defineConfig({
       name: '财务管理',
       icon: 'area-chart',
       path: '/finance',
-      access: '3000',
+      access: '8000',
       component: './finance',
     },
     {
